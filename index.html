@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>CodeMCU – Embedded Systems, IoT, Firmware, Drivers & Hardware Design</title>
+
+    <meta name="description"
+        content="CodeMCU is a technical resource focused on embedded systems, MCU and MPU based hardware design, firmware development, device drivers, TFT and e-paper displays, motor control, wired and wireless communication (802.15.4, Bluetooth, Sub-GHz, Wi-Fi, Ethernet, CAN, Modbus) and real-world IoT projects.">
+
+    <!-- Optional keywords -->
+    <meta name="keywords"
+        content="embedded systems, embedded software, hardware design, firmware development, device driver, low-level driver, MCU, MPU, ARM Cortex, ESP32, ESP8266, STM32, RISC-V, microcontroller, RTOS, FreeRTOS, bare metal, board bring-up, bootloader, OTA update, PCB design, KiCad, Altium, hardware debugging, JTAG, SWD, logic analyzer, oscilloscope, TFT display, LCD, IPS, SPI TFT, parallel TFT, LVGL, e-paper, e-ink, OLED, HMI, GUI, display driver, sensor interfacing, I2C, SPI, UART, USART, RS-485, 1-Wire, GPIO, ADC, DAC, PWM, motor control, stepper motor, DC motor, BLDC, servo, motor driver, gate driver, power electronics, power supply, DC-DC converter, Li-ion, LiPo, battery management, BMS, IoT, Internet of Things, IoT gateway, MQTT, CoAP, REST API, JSON, cloud integration, wireless communication, 802.15.4, Zigbee, Thread, BLE, Bluetooth Low Energy, Bluetooth Classic, Sub-GHz, proprietary RF, LoRa, LoRaWAN, Wi-Fi, WiFi, Ethernet, PoE, CAN, CAN FD, Modbus RTU, Modbus TCP, industrial communication, industrial automation, PLC integration, fieldbus, edge computing">
+
+    <!-- Favicon (place favicon.ico in your root directory) -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="CodeMCU – Embedded Systems, IoT, Firmware & Hardware Design">
+    <meta property="og:description"
+        content="Deep-dive articles on MCU/MPU based hardware, firmware, drivers, displays, motor control and wired/wireless communication such as 802.15.4, Bluetooth, Sub-GHz, Wi-Fi, Ethernet, CAN and Modbus.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.codemcu.com">
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K9VXRWCGQ3"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-K9VXRWCGQ3');
+    </script>
+
+    <style>
+        :root {
+            --bg: #020617;
+            --primary: #4f46e5;
+            --primary-soft: rgba(79, 70, 229, 0.25);
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --accent: #22c55e;
+            --border: #1f2937;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --shadow-soft: 0 24px 80px rgba(0, 0, 0, 0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                sans-serif;
+            background: radial-gradient(circle at top, #111827 0, #020617 45%, #000 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .noise {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.12;
+            mix-blend-mode: soft-light;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 880px;
+            width: 100%;
+        }
+
+        .card {
+            background: radial-gradient(circle at top left, #111827 0, #020617 55%);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            box-shadow: var(--shadow-soft);
+            padding: 32px 28px;
+            display: grid;
+            grid-template-columns: minmax(0, 3fr) minmax(0, 2.5fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                grid-template-columns: 1fr;
+                padding: 24px 20px;
+            }
+        }
+
+        .logo-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-mark {
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 20%, #22c55e, #4f46e5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #e5e7eb;
+            box-shadow: 0 0 0 6px rgba(79, 70, 229, 0.35);
+        }
+
+        .logo-text-main {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.04em;
+        }
+
+        .logo-text-sub {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .logo-right {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            backdrop-filter: blur(12px);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--accent);
+            box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.25);
+        }
+
+        h1 {
+            font-size: clamp(28px, 4vw, 34px);
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+
+        .coming-tag {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            color: #a5b4fc;
+            margin: 4px 0 22px;
+            text-transform: uppercase;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #4f46e5, #22c55e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            max-width: 380px;
+            margin-bottom: 16px;
+        }
+
+        .seo-text {
+            font-size: 12px;
+            color: #9ca3af;
+            max-width: 420px;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .seo-text strong {
+            color: #e5e7eb;
+            font-weight: 600;
+        }
+
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .pill {
+            font-size: 11px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            color: var(--text-muted);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .pill strong {
+            color: var(--text-main);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: var(--primary);
+            box-shadow: 0 0 0 6px var(--primary-soft);
+        }
+
+        .status small {
+            opacity: 0.8;
+            display: block;
+        }
+
+        .notify-box {
+            margin-top: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 380px;
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .notify-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .notify-input {
+            flex: 1;
+            padding: 9px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--text-main);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .notify-input::placeholder {
+            color: #6b7280;
+        }
+
+        .notify-button {
+            border: none;
+            border-radius: 999px;
+            padding: 0 16px;
+            font-size: 13px;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #4b5563, #374151);
+            color: #e5e7eb;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0.8;
+        }
+
+        .stack-note {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 8px;
+        }
+
+        .stack-note span {
+            color: #9ca3af;
+        }
+
+        .right {
+            position: relative;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            padding: 16px 16px 18px;
+            background: radial-gradient(circle at top, rgba(79, 70, 229, 0.25), transparent 60%), rgba(15, 23, 42, 0.96);
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.4), transparent 70%);
+            top: -70px;
+            right: -50px;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .right-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .right-title {
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .right-chip {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            color: var(--text-muted);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .right-sub {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .right-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            font-size: 11px;
+        }
+
+        .metric {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 14px;
+            padding: 10px 10px 9px;
+            border: 1px solid rgba(31, 41, 55, 0.9);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-label {
+            color: #9ca3af;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .metric-unit {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .metric-trend {
+            margin-top: 4px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .metric-badge {
+            padding: 2px 6px;
+            border-radius: 999px;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            background: rgba(22, 163, 74, 0.12);
+            color: #bbf7d0;
+        }
+
+        .metric-badge-blue {
+            padding: 2px 6px;
+            border-radius: 999px;
+            border: 1px solid rgba(56, 189, 248, 0.6);
+            background: rgba(56, 189, 248, 0.16);
+            color: #e0f2fe;
+        }
+
+        .metric-badge-purple {
+            padding: 2px 6px;
+            border-radius: 999px;
+            border: 1px solid rgba(129, 140, 248, 0.6);
+            background: rgba(129, 140, 248, 0.18);
+            color: #e0e7ff;
+        }
+
+        .sparkline {
+            margin-top: 6px;
+            height: 26px;
+            width: 100%;
+        }
+
+        .sparkline svg {
+            width: 100%;
+            height: 100%;
+            opacity: 0.9;
+        }
+
+        .footer {
+            margin-top: 16px;
+            font-size: 10px;
+            color: #6b7280;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .footer span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot-blue {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: #60a5fa;
+        }
+
+        .dot-purple {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: #a855f7;
+        }
+
+        .legal-link {
+            color: inherit;
+            text-decoration: none;
+            border-bottom: 1px dashed rgba(148, 163, 184, 0.7);
+        }
+
+        .legal-link:hover {
+            border-bottom-style: solid;
+        }
+
+        .made-by {
+            margin-top: 10px;
+            font-size: 10px;
+            text-align: right;
+            color: #4b5563;
+            width: 100%;
+        }
+
+        .made-by span {
+            color: #9ca3af;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="noise"></div>
+    <main class="container">
+        <section class="card">
+            <!-- LEFT SIDE -->
+            <div>
+                <div class="logo-row">
+                    <div class="logo">
+                        <div class="logo-mark">C</div>
+                        <div>
+                            <div class="logo-text-main">CODEMCU</div>
+                            <div class="logo-text-sub">IoT & Embedded Engineering</div>
+                        </div>
+                    </div>
+                    <div class="logo-right">
+                        Kocaeli / Türkiye<br />
+                        <span style="opacity:0.8;">Angora Teknoloji</span>
+                    </div>
+                </div>
+
+                <div class="badge">
+                    <div class="badge-dot"></div>
+                    <span>Deep-dive notes on real-world embedded and IoT systems</span>
+                </div>
+
+                <h1>
+                    <span class="highlight">CodeMCU</span> for embedded systems & IoT engineers.
+                </h1>
+
+                <!-- VISIBLE COMING SOON TAG (only in body, not in SEO metas) -->
+                <div class="coming-tag">
+                    COMING SOON
+                </div>
+
+                <p class="subtitle">
+                    A focused place for MCU/MPU based hardware design, firmware and driver development,
+                    display and motor control, wired and wireless communication, and production-ready IoT projects.
+                </p>
+
+                <!-- SEO friendly paragraph with all your topics -->
+                <p class="seo-text">
+                    CodeMCU will cover <strong>hardware design</strong>, <strong>firmware and driver
+                        development</strong> for
+                    <strong>embedded MCU and MPU platforms</strong>, working with <strong>TFT, LCD, OLED, e-paper and
+                        e-ink displays</strong>,
+                    <strong>motor control</strong> (DC, stepper, BLDC), and industry-standard <strong>communication
+                        interfaces</strong> including
+                    <strong>I2C, SPI, UART, RS-485, 802.15.4, Bluetooth, proprietary Sub-GHz RF, Wi-Fi, Ethernet, CAN
+                        bus, Modbus RTU/TCP</strong>
+                    and other protocols used in modern IoT and industrial automation systems.
+                </p>
+
+                <div class="pill-row">
+                    <div class="pill"><strong>Blog</strong> – project articles & teardowns</div>
+                    <div class="pill"><strong>Hardware</strong> – schematics, PCB and layout notes</div>
+                    <div class="pill"><strong>Firmware</strong> – C/C++/RTOS drivers & examples</div>
+                    <div class="pill"><strong>Connectivity</strong> – MQTT, REST, industrial buses</div>
+                </div>
+
+                <div class="status">
+                    <div class="status-dot"></div>
+                    <div>
+                        <span>Platform status: in preparation</span>
+                        <small>Infrastructure, backend and initial content are being set up and tested.</small>
+                    </div>
+                </div>
+
+                <div class="notify-box">
+                    <div class="notify-row">
+                        <input type="email" class="notify-input" placeholder="Email notifications will be added later"
+                            disabled />
+                        <button class="notify-button" type="button" disabled>
+                            Not available yet
+                        </button>
+                    </div>
+                    <div class="stack-note">
+                        <span>Planned stack:</span> Nginx · Linux · GA4 · dashboards backed by real embedded hardware
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE – Fake analytics preview -->
+            <aside class="right" aria-hidden="true">
+                <div class="orb"></div>
+
+                <div class="right-header">
+                    <div class="right-title">
+                        Visitor Overview
+                        <span class="right-chip">preview</span>
+                    </div>
+                    <div class="right-sub">Actual traffic will be monitored with Google Analytics 4.</div>
+                </div>
+
+                <div class="right-grid">
+                    <div class="metric">
+                        <div class="metric-label">Visitors Today</div>
+                        <div class="metric-value">
+                            128
+                            <span class="metric-unit">sessions</span>
+                        </div>
+                        <div class="metric-trend">
+                            <span class="metric-badge">+32%</span>
+                            <span>vs yesterday</span>
+                        </div>
+                        <div class="sparkline">
+                            <svg viewBox="0 0 100 30" preserveAspectRatio="none">
+                                <polyline fill="none" stroke="currentColor" stroke-width="1.7"
+                                    points="0,24 8,22 18,20 28,16 38,18 48,13 58,15 68,11 78,9 88,7 98,10" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="metric">
+                        <div class="metric-label">Active Users</div>
+                        <div class="metric-value">
+                            7 <span class="metric-unit">now</span>
+                        </div>
+                        <div class="metric-trend">
+                            <span class="metric-badge-blue">IoT / hardware focus</span>
+                        </div>
+                        <div class="sparkline">
+                            <svg viewBox="0 0 100 30" preserveAspectRatio="none">
+                                <polyline fill="none" stroke="currentColor" stroke-width="1.7"
+                                    points="0,18 10,16 20,18 30,12 40,14 50,11 60,9 70,12 80,10 90,8 100,9" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="metric">
+                        <div class="metric-label">Top Country</div>
+                        <div class="metric-value">
+                            TR <span class="metric-unit">Turkey</span>
+                        </div>
+                        <div class="metric-trend">
+                            <span class="metric-badge-purple">74%</span>
+                            <span>of traffic</span>
+                        </div>
+                    </div>
+
+                    <div class="metric">
+                        <div class="metric-label">Device Type</div>
+                        <div class="metric-value">
+                            63%
+                            <span class="metric-unit">desktop</span>
+                        </div>
+                        <div class="metric-trend">
+                            <span class="metric-badge-purple">+12%</span>
+                            <span>last 7 days</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    <span>
+                        <span class="dot-blue"></span>
+                        Analytics: Google Analytics 4
+                    </span>
+                    <span>
+                        <span class="dot-purple"></span>
+                        Cookies & privacy policy will be added later
+                    </span>
+                    <div class="made-by">
+                        <span>Platform is being prepared.</span> CodeMCU · 2025
+                    </div>
+                </div>
+            </aside>
+        </section>
+    </main>
+</body>
+
+</html>
